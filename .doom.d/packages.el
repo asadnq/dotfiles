@@ -7,3 +7,5 @@
 ;; (package! builtin-package :disable t)
 ;;
 (package! prettier-js)
+(package! org-plus-contrib)
+(package! with-editor)

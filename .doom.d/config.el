@@ -1,7 +1,7 @@
 ;;; .doom.d/config.el -*- lexical-binding: t; -*-
 
 ;; Place your private configuration here
-(setq doom-theme 'doom-wilmersdorf)
+(setq doom-theme 'doom-dracula)
 (require 'prettier-js )
 (setq prettier-js-args '(
                          "--trailing-comma" "all"
