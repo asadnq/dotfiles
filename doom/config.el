@@ -85,6 +85,7 @@
 
 ;; Initialize today's journal and open it on startup
 (defun my/org-open-daily-journal ()
+  (interactive)
   (let* ((journal-dir (expand-file-name "~/org/journal/"))
          (today (format-time-string "%Y-%m-%d"))
          (journal-file (expand-file-name
@@ -94,13 +95,9 @@
       (make-directory journal-dir t)
       (with-temp-file journal-file
         (insert
-         (format "#+title: Journal - %s\n\n" today)
-         "* Personal\n"
-         "** Notes\n"
-         "** Task\n"
-         "* Work\n"
-         "** Notes\n"
-         "** Task\n")))
+         (format
+          "#+title: Journal - %s\n\n* Personal\n** Notes\n** Tasks\n* Work\n** Notes\n** Task\n"
+          today))))
     (find-file journal-file)))
 
 (add-hook 'emacs-startup-hook #'my/org-open-daily-journal)
@@ -108,6 +105,33 @@
 (map! :leader
       :desc "Open today's journal"
       "j j" #'my/org-open-daily-journal)
+
+;; Initialize a page on Nomni project
+(defun my/org-open-nomni-file ()
+  (interactive)
+  (let* ((directory (expand-file-name "~/org/nomni/")))
+    (make-directory directory t)
+    (let* ((files (directory-files
+                   directory nil
+                   "^[^.].*\\.org$"))
+           (filename (completing-read
+                     "Open Nomni file"
+                      files
+                      nil
+                      nil))
+           (filename (if (string-suffix-p ".org" filename)
+                         filename
+                       (concat filename ".org")))
+           (filepath (expand-file-name filename directory)))
+      (unless (file-exists-p filepath)
+        (with-temp-file filepath
+          (insert (format "#+title: %s\n\n"
+                          (file-name-base filename)))))
+      (find-file filepath))))
+
+(map! :leader
+      :desc "Find or create Nomni file"
+      "j n" #'my/org-open-nomni-file)
 
 ;; Automatic clock-in and clock-out on state changes
 (defun my/org-clock-on-todo-state-change ()
